@@ -3,5 +3,12 @@
 dnf install -y docker
 
 systemctl enable docker
-
 systemctl start docker
+
+floating_ip=$(host hc-ash-1.dpsrv.me|awk '{ print $4 }' || true)
+
+if [ -n $floating_ip ]; then
+	ip addr add $floating_ip dev eth0
+fi
+
+
