@@ -1,6 +1,6 @@
 #!/usr/bin/bash -ex
 
-dnf install -y bind-utils docker
+dnf install -y bind-utils docker git
 
 systemctl enable docker
 systemctl start docker
