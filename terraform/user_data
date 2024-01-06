@@ -5,20 +5,9 @@ dnf install -y bind-utils docker
 systemctl enable docker
 systemctl start docker
 
-cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
-#!/usr/bin/bash -ex
-
-if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
-
-	if ! ip a s | grep -q \$floating_ip; then
-		ip addr add \$floating_ip dev eth0
-	fi
-
-fi
-
 HCLOUD_VOLUME_DATA=HC_Volume_${hcloud_volume_data_id}
 
-if [ -d /mnt/\$HCLOUD_VOLUME_DATA ]; then
+if [ ! -e /mnt/data ] && [ -d /mnt/\$HCLOUD_VOLUME_DATA ]; then
 	ln -s /mnt/\$HCLOUD_VOLUME_DATA /mnt/data
 fi
 
@@ -31,6 +20,19 @@ echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
 chown -R dpsrv:dpsrv ~dpsrv/.ssh
 chmod -R og-rwx ~dpsrv/.ssh
 
+[ -d /mnt/data/dpsrv ] || ( mkdir -p /mnt/data/dpsrv && chown -R dpsrv:dpsrv /mnt/data/dpsrv ) 
+
+cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
+#!/usr/bin/bash -ex
+
+if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
+
+	if ! ip a s | grep -q \$floating_ip; then
+		ip addr add \$floating_ip dev eth0
+	fi
+
+fi
+
 _EOT_
 
 chmod u+x /usr/local/bin/dpsrv-init.sh
@@ -38,8 +40,8 @@ chmod u+x /usr/local/bin/dpsrv-init.sh
 cat >> /usr/lib/systemd/system/dpsrv-init.service << _EOT_
 [Unit]
 Description=DPSRV init
-Requires=local-fs.target
-After=local-fs.target
+Requires=local-fs.target network.target
+After=local-fs.target network.target
 
 [Service]
 Type=simple

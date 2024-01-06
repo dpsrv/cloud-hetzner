@@ -7,7 +7,7 @@ data "template_file" "user_data" {
 }
 
 resource "hcloud_server" "dpsrv" {
-  name        = "dpsrv"
+  name        = "hc-ash-1"
   image       = "fedora-39"
   server_type = var.HCLOUD_SERVER_TYPE
   location    = data.hcloud_location.current.name
