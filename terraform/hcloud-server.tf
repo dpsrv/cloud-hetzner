@@ -2,7 +2,7 @@ data "template_file" "user_data" {
   template = file("user_data")
   vars = {
     hcloud_volume_data_id = hcloud_volume.dpsrv-data.id
-    hcloud_ssh_key_dpsrv = hcloud_ssh_key.dpsrv.public_key
+    hcloud_ssh_key_dpsrv  = hcloud_ssh_key.dpsrv.public_key
   }
 }
 

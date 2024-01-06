@@ -17,8 +17,10 @@ useradd -G docker dpsrv
 
 echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
 
-chown -R dpsrv:dpsrv ~dpsrv/.ssh
-chmod -R og-rwx ~dpsrv/.ssh
+cp -r ~root/.config ~/dpsrv/
+
+chown -R dpsrv:dpsrv ~dpsrv/{.ssh,.config} 
+chmod -R og-rwx ~dpsrv/{.ssh,.config}
 
 if [ ! -d /mnt/data/dpsrv ]; then
 	mkdir -p /mnt/data/dpsrv
@@ -65,4 +67,6 @@ _EOT_
 
 systemctl enable dpsrv-init
 systemctl start dpsrv-init
+
+
 
