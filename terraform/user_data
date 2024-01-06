@@ -20,7 +20,14 @@ echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
 chown -R dpsrv:dpsrv ~dpsrv/.ssh
 chmod -R og-rwx ~dpsrv/.ssh
 
-[ -d /mnt/data/dpsrv ] || ( mkdir -p /mnt/data/dpsrv && chown -R dpsrv:dpsrv /mnt/data/dpsrv ) 
+if [ ! -d /mnt/data/dpsrv ]; then
+	mkdir -p /mnt/data/dpsrv
+	chown -R dpsrv:dpsrv /mnt/data/dpsrv
+	cd /mnt/data/dpsrv
+	git clone https://github.com/dpsrv/rc.git
+	. rc/bin/dpsrv.sh
+	dpsrv-git-clone
+fi 
 
 cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
 #!/usr/bin/bash -ex
