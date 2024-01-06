@@ -1,14 +1,46 @@
 #!/usr/bin/bash -ex
 
-dnf install -y docker
+dnf install -y bind-utils docker
 
 systemctl enable docker
 systemctl start docker
 
-floating_ip=$(host hc-ash-1.dpsrv.me|awk '{ print $4 }' || true)
+cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
+#!/usr/bin/bash -ex
 
-if [ -n $floating_ip ]; then
-	ip addr add $floating_ip dev eth0
+if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
+
+	if ! ip a s | grep -q \$floating_ip; then
+		ip addr add \$floating_ip dev eth0
+	fi
+
 fi
 
+HCLOUD_VOLUME_DATA=HC_Volume_${hcloud_volume_data_id}
+
+if [ -d /mnt/\$HCLOUD_VOLUME_DATA ]; then
+	ln -s /mnt/\$HCLOUD_VOLUME_DATA /mnt/data
+fi
+
+_EOT_
+
+chmod u+x /usr/local/bin/dpsrv-init.sh
+
+cat >> /usr/lib/systemd/system/dpsrv-init.service << _EOT_
+[Unit]
+Description=DPSRV init
+Requires=local-fs.target
+After=local-fs.target
+
+[Service]
+Type=simple
+ExecStart=/usr/local/bin/dpsrv-init.sh
+
+[Install]
+WantedBy=multi-user.target 
+
+_EOT_
+
+systemctl enable dpsrv-init
+systemctl start dpsrv-init
 

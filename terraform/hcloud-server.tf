@@ -1,5 +1,8 @@
 data "template_file" "user_data" {
   template = file("user_data")
+  vars = {
+    hcloud_volume_data_id = hcloud_volume.dpsrv-data.id
+  }
 }
 
 resource "hcloud_server" "dpsrv" {
