@@ -22,6 +22,15 @@ if [ -d /mnt/\$HCLOUD_VOLUME_DATA ]; then
 	ln -s /mnt/\$HCLOUD_VOLUME_DATA /mnt/data
 fi
 
+useradd -G docker dpsrv
+
+[ -d ~dpsrv/.ssh ] || mkdir ~dpsrv/.ssh
+
+echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
+
+chown -R dpsrv:dpsrv ~dpsrv/.ssh
+chmod -R og-rwx ~dpsrv/.ssh
+
 _EOT_
 
 chmod u+x /usr/local/bin/dpsrv-init.sh
