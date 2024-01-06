@@ -17,10 +17,9 @@ useradd -G docker dpsrv
 
 echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
 
-cp -r ~root/.config ~/dpsrv/
 
-chown -R dpsrv:dpsrv ~dpsrv/{.ssh,.config} 
-chmod -R og-rwx ~dpsrv/{.ssh,.config}
+chown -R dpsrv:dpsrv ~dpsrv/.ssh
+chmod -R og-rwx ~dpsrv/.ssh
 
 if [ ! -d /mnt/data/dpsrv ]; then
 	mkdir -p /mnt/data/dpsrv
@@ -46,6 +45,16 @@ if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 
 fi
 
+if [ ! -d ~dpsrv/.config ]; then
+	while [ -f ~/.config/openssl-salt ]; do
+		echo "Waiting for ~/.config"
+		sleep 2
+	done
+	cp -r ~root/.config ~dpsrv/
+	chown -R dpsrv:dpsrv ~dpsrv/.config
+	chmod -R og-rwx ~dpsrv/.config
+fi
+
 _EOT_
 
 chmod u+x /usr/local/bin/dpsrv-init.sh
@@ -67,6 +76,4 @@ _EOT_
 
 systemctl enable dpsrv-init
 systemctl start dpsrv-init
-
-
 
