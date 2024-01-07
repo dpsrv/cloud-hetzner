@@ -10,6 +10,7 @@ resource "terraform_data" "post-apply" {
 			sleep 2
 		done
 		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/.config/git/openssl-* root@${hcloud_server.dpsrv.ipv4_address}:.config/git/
+		scp -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no ~/.gitconfig root@${hcloud_server.dpsrv.ipv4_address}:.gitconfig
 	EOT
   }
 

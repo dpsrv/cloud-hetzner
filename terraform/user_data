@@ -55,9 +55,9 @@ if [ ! -d /mnt/data/dpsrv ]; then
 	done
 
 	mkdir -p /mnt/data/dpsrv
-	cp -r ~root/.config ~dpsrv/
+	cp -r ~root/{.config,.gitconfig} ~dpsrv/
 
-	chown -R dpsrv:dpsrv ~dpsrv/.config /mnt/data/dpsrv
+	chown -R dpsrv:dpsrv ~dpsrv/{.config,.gitconfig} /mnt/data/dpsrv
 
 	sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
 
@@ -82,6 +82,11 @@ WantedBy=multi-user.target
 
 _EOT_
 
+cat >> /etc/sudoers.d/dpsrv << _EOT_
+dpsrv ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/iptables-save
+_EOT_
+
 systemctl enable dpsrv-init
 systemctl start dpsrv-init
+
 
