@@ -1,6 +1,6 @@
 #!/usr/bin/bash -ex
 
-dnf install -y bind-utils docker git
+dnf install -y bind-utils docker docker-compose git
 
 systemctl enable docker
 systemctl start docker
@@ -20,25 +20,25 @@ echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
 chown -R dpsrv:dpsrv ~dpsrv/.ssh
 chmod -R og-rwx ~dpsrv/.ssh
 
-if [ ! -d /mnt/data/dpsrv ]; then
-	mkdir -p /mnt/data/dpsrv
-	chown -R dpsrv:dpsrv /mnt/data/dpsrv
-	sudo -u dpsrv bash -c '
-		pushd /mnt/data/dpsrv
-		git clone https://github.com/maxfortun/git-openssl-secrets.git
-		pushd git-openssl-secrets
-		ln -s git-setenv-openssl-secrets-fs.sh git-setenv-openssl-secrets.sh
-		popd >/dev/null
-		git clone https://github.com/dpsrv/rc.git
-		. rc/bin/dpsrv.sh
-		dpsrv-git-clone
-		dpsrv-git-init-secrets
-		popd >/dev/null
-	'
-fi 
+cat >> /usr/local/bin/dpsrv-init-projects.sh << _EOT_
+#!/usr/bin/bash -ex
+
+docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
+
+pushd /mnt/data/dpsrv
+git clone https://github.com/maxfortun/git-openssl-secrets.git
+pushd git-openssl-secrets
+ln -s git-setenv-openssl-secrets-fs.sh git-setenv-openssl-secrets.sh
+popd >/dev/null
+git clone https://github.com/dpsrv/rc.git
+. rc/bin/dpsrv.sh
+dpsrv-git-clone
+dpsrv-git-init-secrets 
+
+_EOT_
 
 cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
-#!/usr/bin/bash -ex
+#!/usr/bin/bash -x
 
 if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 
@@ -48,25 +48,30 @@ if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 
 fi
 
-if [ ! -d ~dpsrv/.config ]; then
+if [ ! -d /mnt/data/dpsrv ]; then
 	while [ -f ~/.config/openssl-salt ]; do
 		echo "Waiting for ~/.config"
 		sleep 2
 	done
+
+	mkdir -p /mnt/data/dpsrv
 	cp -r ~root/.config ~dpsrv/
-	chown -R dpsrv:dpsrv ~dpsrv/.config
-	chmod -R og-rwx ~dpsrv/.config
-fi
+
+	chown -R dpsrv:dpsrv ~dpsrv/.config /mnt/data/dpsrv
+
+	sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
+
+fi 
 
 _EOT_
 
-chmod u+x /usr/local/bin/dpsrv-init.sh
+chmod a+x /usr/local/bin/dpsrv-init*.sh
 
 cat >> /usr/lib/systemd/system/dpsrv-init.service << _EOT_
 [Unit]
 Description=DPSRV init
-Requires=local-fs.target network.target
-After=local-fs.target network.target
+Requires=multi-user.target
+After=multi-user.target
 
 [Service]
 Type=simple
