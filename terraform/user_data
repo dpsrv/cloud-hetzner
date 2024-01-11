@@ -1,9 +1,9 @@
 #!/usr/bin/bash -ex
 
-dnf install -y bind-utils docker docker-compose git
+dnf install -y iptables-services bind-utils docker docker-compose git bzip2
 
-systemctl enable docker
-systemctl start docker
+systemctl --now enable iptables.service ip6tables.service
+systemctl --now enable docker
 
 HCLOUD_VOLUME_DATA=HC_Volume_${hcloud_volume_data_id}
 
@@ -34,6 +34,9 @@ git clone https://github.com/dpsrv/rc.git
 . rc/bin/dpsrv.sh
 dpsrv-git-clone
 dpsrv-git-init-secrets 
+
+[ -d ~dpsrv/.bashrc.d ] || mkdir ~dpsrv/.bashrc.d
+echo '. /mnt/data/dpsrv/rc/bin/dpsrv.sh' > ~dpsrv/.bashrc.d/dpsrv
 
 _EOT_
 
@@ -83,10 +86,8 @@ WantedBy=multi-user.target
 _EOT_
 
 cat >> /etc/sudoers.d/dpsrv << _EOT_
-dpsrv ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/iptables-save
+dpsrv ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/ip6tables,/sbin/iptables-save,/sbin/ip6tables-save,/usr/bin/tee /etc/sysconfig/iptables,/usr/bin/tee /etc/sysconfig/ip6tables
 _EOT_
 
-systemctl enable dpsrv-init
-systemctl start dpsrv-init
-
+systemctl --now enable dpsrv-init
 
