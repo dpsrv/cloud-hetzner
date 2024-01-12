@@ -1,6 +1,9 @@
 #!/usr/bin/bash -ex
 
-dnf install -y iptables-services bind-utils docker docker-compose git bzip2
+echo 'DNSStubListener=no' >> /etc/systemd/resolved.conf
+systemctl restart systemd-resolved
+
+dnf install -y iptables-services bind-utils nc docker docker-compose git bzip2
 
 systemctl --now enable iptables.service ip6tables.service
 systemctl --now enable docker
@@ -90,4 +93,5 @@ dpsrv ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/ip6tables,/sbin/iptables-save,/sbi
 _EOT_
 
 systemctl --now enable dpsrv-init
+
 
