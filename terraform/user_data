@@ -3,7 +3,9 @@
 echo 'DNSStubListener=no' >> /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
 
-dnf install -y iptables-services bind-utils nc docker docker-compose git bzip2
+dnf install -y dnf-plugins-core iptables-services policycoreutils-python-utils setools-console setroubleshoot-server bind-utils nc git bzip2
+dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
+dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
 systemctl --now enable iptables.service ip6tables.service
 systemctl --now enable docker

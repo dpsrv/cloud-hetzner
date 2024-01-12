@@ -7,11 +7,12 @@ data "template_file" "user_data" {
 }
 
 resource "hcloud_server" "dpsrv" {
-  name        = "hc-ash-1"
-  image       = "fedora-39"
-  server_type = var.HCLOUD_SERVER_TYPE
-  location    = data.hcloud_location.current.name
-  ssh_keys    = [hcloud_ssh_key.dpsrv.id]
-  user_data   = data.template_file.user_data.rendered
+  name         = "hc-ash-1"
+  image        = "fedora-39"
+  server_type  = var.HCLOUD_SERVER_TYPE
+  location     = data.hcloud_location.current.name
+  ssh_keys     = [hcloud_ssh_key.dpsrv.id]
+  firewall_ids = [hcloud_firewall.dpsrv.id]
+  user_data    = data.template_file.user_data.rendered
 }
 
