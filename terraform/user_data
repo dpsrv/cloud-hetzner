@@ -3,7 +3,7 @@
 echo 'DNSStubListener=no' >> /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
 
-dnf install -y dnf-plugins-core iptables-services policycoreutils-python-utils setools-console setroubleshoot-server bind-utils nc git bzip2
+dnf install -y dnf-plugins-core iptables-services policycoreutils-python-utils setools-console setroubleshoot-server bind-utils nc git bzip2 tcpdump
 dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
 dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
 
@@ -55,6 +55,9 @@ if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 	fi
 
 fi
+
+sysctl -w net.ipv4.conf.all.route_localnet=1
+iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE
 
 if [ ! -d /mnt/data/dpsrv ]; then
 	while [ -f ~/.config/openssl-salt ]; do
