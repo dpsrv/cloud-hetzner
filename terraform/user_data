@@ -1,4 +1,4 @@
-#!/usr/bin/bash -ex
+#!/bin/bash -ex
 
 echo 'DNSStubListener=no' >> /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
@@ -32,7 +32,7 @@ for user in dpsrv ezsso; do
 done
 
 cat >> /usr/local/bin/dpsrv-init-projects.sh << _EOT_
-#!/usr/bin/bash -ex
+#!/bin/bash -ex
 
 docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
 
@@ -52,7 +52,7 @@ dpsrv-up
 _EOT_
 
 cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
-#!/usr/bin/bash -x
+#!/bin/bash -ex
 
 if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 
@@ -71,11 +71,11 @@ while [ -f ~/.config/openssl-salt ]; do
 done
 
 for user in dpsrv ezsso; do
-	[ ! -d /mnt/data/$user ] || conitnue
-	mkdir -p /mnt/data/$user
-	cp -r ~root/{.config,.gitconfig} /home/$user/
+	[ ! -d /mnt/data/\$user ] || continue
+	mkdir -p /mnt/data/\$user
+	cp -r ~root/{.config,.gitconfig} /home/\$user/
 
-	chown -R $user:$user /home/$user/{.config,.gitconfig} /mnt/data/$user
+	chown -R \$user:\$user /home/\$user/{.config,.gitconfig} /mnt/data/\$user
 done
 
 sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
@@ -104,5 +104,4 @@ dpsrv ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/ip6tables,/sbin/iptables-save,/sbi
 _EOT_
 
 systemctl --now enable dpsrv-init
-
 
