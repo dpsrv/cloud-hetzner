@@ -70,12 +70,16 @@ while [ -f ~/.config/openssl-salt ]; do
 	sleep 2
 done
 
+git config --global --add safe.directory /root/dpsrv/rc
+
 for user in dpsrv ezsso; do
 	[ ! -d /mnt/data/\$user ] || continue
 	mkdir -p /mnt/data/\$user
-	cp -r ~root/{.config,.gitconfig} /home/\$user/
+	cp -r ~root/{.config,.gitconfig,.git-credentials} /home/\$user/
 
-	chown -R \$user:\$user /home/\$user/{.config,.gitconfig} /mnt/data/\$user
+	chown -R \$user:\$user /home/\$user/{.config,.gitconfig,.git-credentials} /mnt/data/\$user
+
+	sudo -u \$user git config --global credential.helper store
 done
 
 sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
