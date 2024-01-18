@@ -25,6 +25,10 @@ for user in dpsrv ezsso; do
 
 	chown -R $user:$user /home/$user/.ssh
 	chmod -R og-rwx /home/$user/.ssh
+
+	[ -d /home/$user/.bashrc.d ] || mkdir /home/$user/.bashrc.d
+	echo ". /mnt/data/dpsrv/rc/bin/dpsrv.sh" > /home/$user/.bashrc.d/dpsrv
+	[ $user = dpsrv ] || echo ". /mnt/data/$user/rc/bin/$user.sh" > /home/$user/.bashrc.d/$user
 done
 
 cat >> /usr/local/bin/dpsrv-init-projects.sh << _EOT_
@@ -42,8 +46,6 @@ git clone https://github.com/dpsrv/rc.git
 dpsrv-git-clone
 dpsrv-git-init-secrets 
 
-[ -d ~dpsrv/.bashrc.d ] || mkdir ~dpsrv/.bashrc.d
-echo '. /mnt/data/dpsrv/rc/bin/dpsrv.sh' > ~dpsrv/.bashrc.d/dpsrv
 
 dpsrv-up
 
