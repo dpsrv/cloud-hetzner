@@ -65,21 +65,20 @@ fi
 sysctl -w net.ipv4.conf.all.route_localnet=1
 iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE
 
-if [ ! -d /mnt/data/dpsrv ]; then
-	while [ -f ~/.config/openssl-salt ]; do
-		echo "Waiting for ~/.config"
-		sleep 2
-	done
+while [ -f ~/.config/openssl-salt ]; do
+	echo "Waiting for ~/.config"
+	sleep 2
+done
 
-	for user in dpsrv ezsso; do
-		mkdir -p /mnt/data/$user
-		cp -r ~root/{.config,.gitconfig} /home/$user/
+for user in dpsrv ezsso; do
+	[ ! -d /mnt/data/$user ] || conitnue
+	mkdir -p /mnt/data/$user
+	cp -r ~root/{.config,.gitconfig} /home/$user/
 
-		chown -R $user:$user /home/$user/{.config,.gitconfig} /mnt/data/$user
-	done
+	chown -R $user:$user /home/$user/{.config,.gitconfig} /mnt/data/$user
+done
 
-	sudo -u $user /usr/local/bin/dpsrv-init-projects.sh
-fi 
+sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
 
 _EOT_
 
