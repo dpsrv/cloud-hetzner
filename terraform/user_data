@@ -16,14 +16,16 @@ if [ ! -e /mnt/data ] && [ -d /mnt/\$HCLOUD_VOLUME_DATA ]; then
 	ln -s /mnt/\$HCLOUD_VOLUME_DATA /mnt/data
 fi
 
-useradd -G docker dpsrv
+for user in dpsrv ezsso; do
+	useradd -G docker $user
 
-[ -d ~dpsrv/.ssh ] || mkdir ~dpsrv/.ssh
+	[ -d /home/$user/.ssh ] || mkdir /home/$user/.ssh
 
-echo "${hcloud_ssh_key_dpsrv}" >> ~dpsrv/.ssh/authorized_keys
+	echo "${hcloud_ssh_key_dpsrv}" >> /home/$user/.ssh/authorized_keys
 
-chown -R dpsrv:dpsrv ~dpsrv/.ssh
-chmod -R og-rwx ~dpsrv/.ssh
+	chown -R $user:$user /home/$user/.ssh
+	chmod -R og-rwx /home/$user/.ssh
+done
 
 cat >> /usr/local/bin/dpsrv-init-projects.sh << _EOT_
 #!/usr/bin/bash -ex
@@ -42,6 +44,8 @@ dpsrv-git-init-secrets
 
 [ -d ~dpsrv/.bashrc.d ] || mkdir ~dpsrv/.bashrc.d
 echo '. /mnt/data/dpsrv/rc/bin/dpsrv.sh' > ~dpsrv/.bashrc.d/dpsrv
+
+dpsrv-up
 
 _EOT_
 
@@ -65,13 +69,14 @@ if [ ! -d /mnt/data/dpsrv ]; then
 		sleep 2
 	done
 
-	mkdir -p /mnt/data/dpsrv
-	cp -r ~root/{.config,.gitconfig} ~dpsrv/
+	for user in dpsrv ezsso; do
+		mkdir -p /mnt/data/$user
+		cp -r ~root/{.config,.gitconfig} /home/$user/
 
-	chown -R dpsrv:dpsrv ~dpsrv/{.config,.gitconfig} /mnt/data/dpsrv
+		chown -R $user:$user /home/$user/{.config,.gitconfig} /mnt/data/$user
+	done
 
-	sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
-
+	sudo -u $user /usr/local/bin/dpsrv-init-projects.sh
 fi 
 
 _EOT_
