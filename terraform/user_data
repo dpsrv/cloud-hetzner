@@ -66,6 +66,8 @@ sysctl -w net.ipv4.conf.all.route_localnet=1
 iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE -m comment --comment dpsrv:forward:port
 
 ipset list blacklist || ipset create blacklist hash:ip hashsize 4096
+iptables -I INPUT -m set --match-set blacklist src -j DROP -m comment --comment dpsrv:blacklist
+iptables -I FORWARD -m set --match-set blacklist src -j DROP -m comment --comment dpsrv:blacklist
 
 while [ -f ~/.config/openssl-salt ]; do
 	echo "Waiting for ~/.config"
