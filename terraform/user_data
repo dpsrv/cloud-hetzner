@@ -115,6 +115,16 @@ cat >> /etc/sudoers.d/ezsso << _EOT_
 ezsso ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/ip6tables,/sbin/iptables-save,/sbin/ip6tables-save,/usr/bin/tee /etc/sysconfig/iptables,/usr/bin/tee /etc/sysconfig/ip6tables
 _EOT_
 
+cat >> /etc/yum.repos.d/mongodb.repo << _EOT_
+[mongodb]
+name=MongoDB
+baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/7.0/${basearch}/
+gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
+_EOT_
+
+rpm --import https://www.mongodb.org/static/pgp/server-7.0.asc
+dnf install -y mongodb-mongosh-shared-openssl3
+
 systemctl --now enable dpsrv-init
 
 
