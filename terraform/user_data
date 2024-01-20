@@ -34,20 +34,19 @@ done
 
 cat >> /usr/local/bin/dpsrv-init-projects.sh << _EOT_
 #!/bin/bash -ex
+user=$1
 
-docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
-
-pushd /mnt/data/dpsrv
+pushd /mnt/data/\$user
 git clone https://github.com/maxfortun/git-openssl-secrets.git
 pushd git-openssl-secrets
 ln -s git-setenv-openssl-secrets-fs.sh git-setenv-openssl-secrets.sh
 popd >/dev/null
-git clone https://github.com/dpsrv/rc.git
-. rc/bin/dpsrv.sh
-dpsrv-git-clone
-dpsrv-git-init-secrets 
+git clone https://github.com/\$user/rc.git
+. rc/bin/\$user.sh
+\$user-git-clone
+\$user-git-init-secrets 
 
-dpsrv-up
+\$user-up
 
 _EOT_
 
@@ -72,6 +71,7 @@ done
 
 export HOME=\$\{HOME:-/root}
 
+docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
 
 for user in dpsrv ezsso; do
 	[ ! -d /mnt/data/\$user ] || continue
@@ -82,9 +82,9 @@ for user in dpsrv ezsso; do
 
 	sudo -u \$user git config --global credential.helper store
 	sudo -u \$user git config --global --add safe.directory /root/dpsrv/rc
-done
 
-sudo -u dpsrv /usr/local/bin/dpsrv-init-projects.sh
+	sudo -u \$user /usr/local/bin/dpsrv-init-projects.sh \$user
+done
 
 _EOT_
 
@@ -110,5 +110,6 @@ dpsrv ALL=(ALL) NOPASSWD:/sbin/iptables,/sbin/ip6tables,/sbin/iptables-save,/sbi
 _EOT_
 
 systemctl --now enable dpsrv-init
+
 
 
