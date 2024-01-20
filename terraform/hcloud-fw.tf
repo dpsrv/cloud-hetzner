@@ -60,4 +60,14 @@ resource "hcloud_firewall" "dpsrv" {
     ]
   }
 
+  rule {
+    direction = "in"
+    protocol  = "tcp"
+    port      = "27017"
+    source_ips = [
+      "0.0.0.0/0",
+      "::/0"
+    ]
+  }
+
 }
