@@ -62,6 +62,9 @@ if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 fi
 
 sysctl -w net.ipv4.conf.all.route_localnet=1
+sysctl -w net.bridge.bridge-nf-call-iptables=0
+# alternative to above for private networks:
+# iptables -A FORWARD -i br0 -o br0 -j ACCEPT
 iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE -m comment --comment dpsrv:forward:port
 
 while [ -f ~/.config/openssl-salt ]; do
@@ -118,7 +121,7 @@ _EOT_
 cat >> /etc/yum.repos.d/mongodb.repo << _EOT_
 [mongodb]
 name=MongoDB
-baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/7.0/${basearch}/
+baseurl=https://repo.mongodb.org/yum/redhat/9/mongodb-org/7.0/\$\{basearch}/
 gpgkey=https://www.mongodb.org/static/pgp/server-7.0.asc
 _EOT_
 
