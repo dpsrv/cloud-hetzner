@@ -89,6 +89,7 @@ for user in dpsrv ezsso; do
 	sudo -u \$user /usr/local/bin/dpsrv-init-projects.sh \$user
 done
 
+. /mnt/data/dpsrv/rc/bin/dpsrv.sh
 dpsrv-activate-latest
 
 _EOT_
