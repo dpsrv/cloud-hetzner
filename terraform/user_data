@@ -62,7 +62,7 @@ if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
 fi
 
 sysctl -w net.ipv4.conf.all.route_localnet=1
-iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE -m comment --comment dpsrv:forward:port
+#iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE -m comment --comment dpsrv:forward:port
 
 while [ -f ~/.config/openssl-salt ]; do
 	echo "Waiting for ~/.config"
@@ -74,7 +74,7 @@ export HOME=\$\{HOME:-/root}
 docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
 bridgeIP=\$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
 bridgeLabel=\$(ip -json address show to "\$bridgeIP/32"|jq -r '.[].addr_info[].label')
-ip link set \$bridgeLabel promisc on
+#ip link set \$bridgeLabel promisc on
 
 for user in dpsrv ezsso; do
 	[ ! -d /mnt/data/\$user ] || continue
@@ -130,6 +130,5 @@ rpm --import https://www.mongodb.org/static/pgp/server-7.0.asc
 dnf install -y mongodb-mongosh-shared-openssl3
 
 systemctl --now enable dpsrv-init
-
 
 
