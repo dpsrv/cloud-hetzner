@@ -52,8 +52,8 @@ _EOT_
 
 cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
 #!/bin/bash -ex
-
-if floating_ip=\$(host hc-ash-1.dpsrv.me|awk '{ print \$4 }'); then
+resolved=\$(host "\$(hostname -s).dpsrv.me")
+if floating_ip=\$(echo "\$resolved"|awk '{ print \$4 }'); then
 
 	if ! ip a s | grep -q \$floating_ip; then
 		ip addr add \$floating_ip dev eth0
@@ -72,9 +72,6 @@ done
 export HOME=\$\{HOME:-/root}
 
 docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
-bridgeIP=\$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
-bridgeLabel=\$(ip -json address show to "\$bridgeIP/32"|jq -r '.[].addr_info[].label')
-#ip link set \$bridgeLabel promisc on
 
 for user in dpsrv ezsso; do
 	[ ! -d /mnt/data/\$user ] || continue
@@ -91,6 +88,10 @@ done
 
 . /mnt/data/dpsrv/rc/bin/dpsrv.sh
 dpsrv-activate-latest
+
+bridgeIP=\$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
+bridgeLabel=\$(ip -json address show to "\$bridgeIP/32"|jq -r '.[].addr_info[].label')
+ifconfig \$bridgeLabel promisc
 
 _EOT_
 
