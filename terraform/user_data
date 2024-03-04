@@ -60,8 +60,11 @@ if floating_ip=\$(echo "\$resolved"|awk '{ print \$4 }'); then
 	fi
 
 fi
+
 sysctl -w vm.swappiness=10
+sysctl -w vm.vfs_cache_pressure=1000
 sysctl -w net.ipv4.conf.all.route_localnet=1
+
 #iptables -t nat -A POSTROUTING -m addrtype --src-type LOCAL --dst-type UNICAST -j MASQUERADE -m comment --comment dpsrv:forward:port
 
 while [ -f ~/.config/openssl-salt ]; do
