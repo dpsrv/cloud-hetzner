@@ -61,6 +61,7 @@ if floating_ip=\$(echo "\$resolved"|awk '{ print \$4 }'); then
 
 fi
 
+sysctl -w vm.max_map_count=262144
 sysctl -w vm.swappiness=0
 sysctl -w vm.vfs_cache_pressure=1000
 sysctl -w net.ipv4.conf.all.route_localnet=1
