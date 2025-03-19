@@ -97,6 +97,13 @@ export HOME=\$\{HOME:-/root}
 
 docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
 
+cat > /etc/cron.daily/docker-builder-prune.sh << _EOT_
+#!/bin/ash
+
+docker builder prune -f
+_EOT_
+chmod a+x /etc/cron.daily/docker-builder-prune.sh
+
 for user in dpsrv ezsso; do
 	[ ! -d /mnt/data/\$user ] || continue
 	mkdir -p /mnt/data/\$user
