@@ -98,7 +98,7 @@ export HOME=\$\{HOME:-/root}
 docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
 
 cat > /etc/cron.daily/docker-builder-prune.sh << _EOT_
-#!/bin/ash
+#!/usr/bin/bash
 
 docker builder prune -f
 _EOT_
