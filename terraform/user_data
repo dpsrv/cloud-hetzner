@@ -104,6 +104,8 @@ docker builder prune -f
 _EOT_
 chmod a+x /etc/cron.daily/docker-builder-prune.sh
 
+systemctl --now enable crond
+
 for user in dpsrv ezsso; do
 	[ ! -d /mnt/data/\$user ] || continue
 	mkdir -p /mnt/data/\$user
