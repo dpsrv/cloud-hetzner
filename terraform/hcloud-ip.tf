@@ -14,6 +14,6 @@ resource "hcloud_rdns" "dpsrv" {
   count          = var.HCLOUD_SERVER_COUNT
   floating_ip_id = hcloud_floating_ip.dpsrv[count.index].id
   ip_address     = hcloud_floating_ip.dpsrv[count.index].ip_address
-  dns_ptr        = "hc-ash-${count.index}.dpsrv.me"
+  dns_ptr        = "hc-ash-${count.index + 1}.dpsrv.me"
 }
 
