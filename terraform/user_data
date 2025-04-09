@@ -126,9 +126,6 @@ for user in dpsrv ezsso; do
 	sudo -u \$user /usr/local/bin/dpsrv-init-projects.sh \$user
 done
 
-. /mnt/data/dpsrv/rc/bin/dpsrv.sh
-dpsrv-activate-latest
-
 bridgeIP=\$(docker network inspect --format '{{(index .IPAM.Config 0).Gateway}}' dpsrv)
 bridgeLabel=\$(ip -json address show to "\$bridgeIP/32"|jq -r '.[].addr_info[].label')
 ifconfig \$bridgeLabel promisc
