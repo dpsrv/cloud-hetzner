@@ -1,4 +1,5 @@
 resource "hcloud_volume" "dpsrv-data" {
+  count    = var.HCLOUD_SERVER_COUNT
   name     = "dpsrv-data"
   size     = 50
   format   = "ext4"
@@ -6,8 +7,9 @@ resource "hcloud_volume" "dpsrv-data" {
 }
 
 resource "hcloud_volume_attachment" "dpsrv-data" {
-  volume_id = hcloud_volume.dpsrv-data.id
-  server_id = hcloud_server.dpsrv.id
+  count     = var.HCLOUD_SERVER_COUNT
+  volume_id = hcloud_volume.dpsrv-data[count.index].id
+  server_id = hcloud_server.dpsrv[count.index].id
   automount = true
 }
 
