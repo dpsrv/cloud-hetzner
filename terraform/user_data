@@ -3,6 +3,11 @@
 echo 'DNSStubListener=no' >> /etc/systemd/resolved.conf
 systemctl restart systemd-resolved
 
+cat >> /etc/profile.d/hcloud.sh << _EOT_
+export HCLOUD_LOCATION=${hcloud_location}
+export HCLOUD_NODE_ID=${hcloud_node_id}
+_EOT_
+
 dnf install -y dnf-plugins-core iptables-services ipset policycoreutils-python-utils setools-console setroubleshoot-server ntpsec bind-utils nc git bzip2 tcpdump cronie fail2ban tmux colorized-logs
 dnf config-manager --add-repo https://download.docker.com/linux/fedora/docker-ce.repo
 dnf install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
