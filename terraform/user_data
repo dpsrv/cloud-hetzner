@@ -76,6 +76,16 @@ git clone https://github.com/\$user/rc.git
 
 _EOT_
 
+cat > /etc/cron.daily/docker-builder-prune.sh << _EOT_
+#!/usr/bin/bash
+
+docker builder prune -f
+
+_EOT_
+
+chmod a+x /etc/cron.daily/docker-builder-prune.sh
+
+
 cat >> /usr/local/bin/dpsrv-init.sh << _EOT_
 #!/bin/bash -ex
 . /etc/profile.d/dpsrv.sh
@@ -103,13 +113,6 @@ done
 export HOME=\$\{HOME:-/root}
 
 docker network ls | grep -q '^[^ ]*[ ]*dpsrv' || docker network create dpsrv
-
-cat > /etc/cron.daily/docker-builder-prune.sh << _EOT_
-#!/usr/bin/bash
-
-docker builder prune -f
-_EOT_
-chmod a+x /etc/cron.daily/docker-builder-prune.sh
 
 systemctl --now enable crond
 
