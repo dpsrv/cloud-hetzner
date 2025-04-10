@@ -13,7 +13,8 @@ data "template_file" "user_data" {
 resource "hcloud_server" "dpsrv" {
   count        = var.HCLOUD_SERVER_COUNT
   name         = "hc-${data.hcloud_location.current.name}-${count.index + 1}"
-  image        = "fedora-39"
+  image        = "fedora-40"
+  allow_deprecated_images = true
   server_type  = var.HCLOUD_SERVER_TYPE
   location     = data.hcloud_location.current.name
   ssh_keys     = [hcloud_ssh_key.dpsrv.id]
