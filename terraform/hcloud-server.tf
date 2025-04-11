@@ -1,6 +1,6 @@
 data "template_file" "user_data" {
   count    = var.HCLOUD_SERVER_COUNT
-  template = file("user_data")
+  template = file("user_data.fedora41")
   vars = {
     hcloud_volume_data_id = hcloud_volume.dpsrv-data[count.index].id
     hcloud_ssh_key_dpsrv  = hcloud_ssh_key.dpsrv.public_key
