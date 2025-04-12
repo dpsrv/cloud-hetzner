@@ -198,4 +198,3 @@ dnf install -y mongodb-mongosh-shared-openssl3
 
 systemctl --now enable dpsrv-init
 
-
