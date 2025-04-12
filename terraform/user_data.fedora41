@@ -14,6 +14,7 @@ dnf install -y \
 	dnf-plugins-core \
 	net-tools \
 	iptables-services \
+	iptables-legacy \
 	ipset \
 	policycoreutils-python-utils \
 	setools-console \
