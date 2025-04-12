@@ -10,7 +10,24 @@ export DPSRV_REGION=${DPSRV_REGION}
 export DPSRV_NODE=${DPSRV_NODE}
 _EOT_
 
-dnf install -y dnf-plugins-core net-tools iptables-services ipset policycoreutils-python-utils setools-console setroubleshoot-server ntpsec bind-utils nc git bzip2 tcpdump cronie fail2ban tmux colorized-logs
+dnf install -y \
+	dnf-plugins-core \
+	net-tools \
+	iptables-services \
+	ipset \
+	policycoreutils-python-utils \
+	setools-console \
+	setroubleshoot-server \
+	ntpsec \
+	bind-utils \
+	nc \
+	git \
+	bzip2 \
+	tcpdump \
+	cronie \
+	fail2ban \
+	tmux \
+	colorized-logs
 
 update-alternatives --set iptables /usr/sbin/iptables-legacy
 
