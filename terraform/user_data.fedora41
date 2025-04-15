@@ -1,13 +1,17 @@
 #!/bin/bash -ex
 
-if [ ! -e /mnt/data ] && [ -d /mnt/\$HCLOUD_VOLUME_DATA ]; then
-	ln -s /mnt/\$HCLOUD_VOLUME_DATA /mnt/data
-fi
-
 cat >> /etc/profile.d/dpsrv.sh << _EOT_
 export DPSRV_REGION=${DPSRV_REGION}
 export DPSRV_NODE=${DPSRV_NODE}
 _EOT_
+
+dnf install -y git
+
+while [ ! -d /mnt/\$HCLOUD_VOLUME_DATA ]; do
+	echo "Waiting for the data volume /mnt/\$HCLOUD_VOLUME_DATA"
+	sleep 2
+done
+ln -s /mnt/\$HCLOUD_VOLUME_DATA /mnt/data
 
 . /etc/os-release
 mkdir -p /opt/dpsrv
