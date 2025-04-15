@@ -1,6 +1,6 @@
 #!/bin/bash -ex
 
-export -p > /etc/profile.d/dpsrv.sh
+declare -px > /etc/profile.d/dpsrv.sh
 
 dnf install -y git
 
