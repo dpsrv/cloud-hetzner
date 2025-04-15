@@ -1,6 +1,9 @@
 #!/bin/bash -ex
 
-declare -p > /etc/profile.d/dpsrv.sh
+cat >> /etc/profile.d/dpsrv.sh << _EOT_
+export DPSRV_REGION=$DPSRV_REGION
+export DPSRV_NODE=$DPSRV_NODE
+_EOT_
 
 dnf install -y git
 
@@ -19,8 +22,8 @@ cd /opt/dpsrv
 git clone https://github.com/dpsrv/cloud-init.git
 
 . /etc/os-release
-DPSRV_CLOUD_INIT_D=$PWD/cloud-init/$ID/$VERSION_ID
+DPSRV_CLOUD_INIT_D=\$PWD/cloud-init/\$ID/\$VERSION_ID
 
-[ ! -x $DPSRV_CLOUD_INIT_D/cloud-init.sh ] || $DPSRV_CLOUD_INIT_D/cloud-init.sh
+[ ! -x \$DPSRV_CLOUD_INIT_D/cloud-init.sh ] || \$DPSRV_CLOUD_INIT_D/cloud-init.sh
 
 ) &
