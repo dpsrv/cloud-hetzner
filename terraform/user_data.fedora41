@@ -24,9 +24,9 @@ HCLOUD_VOLUME_MNT=/mnt/HC_Volume_${HCLOUD_VOLUME_DATA_ID}
 	git clone https://github.com/dpsrv/cloud-init.git
 
 	. /etc/os-release
-	DPSRV_CLOUD_INIT_D=\$PWD/cloud-init/\$ID/\$VERSION_ID
+	DPSRV_CLOUD_INIT_D=$PWD/cloud-init/$ID/$VERSION_ID
 	
-	[ ! -x \$DPSRV_CLOUD_INIT_D/cloud-init.sh ] || \$DPSRV_CLOUD_INIT_D/cloud-init.sh
+	[ ! -x $DPSRV_CLOUD_INIT_D/cloud-init.sh ] || $DPSRV_CLOUD_INIT_D/cloud-init.sh
 
 ) &
 
