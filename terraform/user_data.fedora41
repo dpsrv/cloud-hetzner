@@ -29,4 +29,3 @@ HCLOUD_VOLUME_MNT=/mnt/HC_Volume_${HCLOUD_VOLUME_DATA_ID}
 	[ ! -x $DPSRV_CLOUD_INIT_D/cloud-init.sh ] || $DPSRV_CLOUD_INIT_D/cloud-init.sh
 
 ) &
-
