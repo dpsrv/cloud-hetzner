@@ -8,6 +8,7 @@ _EOT_
 dnf install -y git
 
 HCLOUD_VOLUME_MNT=/mnt/HC_Volume_${HCLOUD_VOLUME_DATA_ID}
+FLOATING_IP_IF=eth0
 
 # background the wait loop so that cloud-init can proceed to mount the drive
 (
